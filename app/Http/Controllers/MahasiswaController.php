@@ -39,7 +39,7 @@ class MahasiswaController extends Controller
             'tanggal_lahir' => 'required',
             'tempat_lahir' => 'required|max:30',
             'asal_sma' => 'required|max:30',
-            'foto' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|required',
+            'foto' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'prodi_id' => 'required'
         ]);
 
