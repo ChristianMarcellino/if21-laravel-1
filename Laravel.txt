@@ -1,0 +1,347 @@
+
+php artisan serve
+php artisan make:model NamaModel -mcr (migration, create, resource)
+php artisan make:model Fakultas -mcr
+php artisan make:controller NamaController
+php artisan make:model NamaModel
+php artisan migrate
+
+1.composer create-project --prefer-dist laravel/Laravel:^12.0 if21-laravel
+2. php artisan serve
+3. php artisan make:model Fakultas -mcr
+4. isi function up di migration fakultas
+ public function up(): void
+    {
+        Schema::create('fakultas', function (Blueprint $table) {
+            $table->uuid("id"); //uuid = kode agar primary key nya aman 
+            $table->primary("id");
+            $table->string('nama', 50);
+            $table->string("singkatan", 4);
+            $table->string("nama_dekan", 30);
+            $table->string("nama_wadek",30);
+            $table->timestamps();
+        });
+    }
+
+5. ubah env 
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_if21
+DB_USERNAME=root
+DB_PASSWORD=
+6.php artisan migrate
+7. Ubah route web.php
+Route::resource('/fakultas', FakultasController::class);
+8. Ubah model fakultas
+class Fakultas extends Model
+{
+    protected $fillable = ['nama','singkatan','nama_dekan','nama_wadek'];
+}
+9. ubah controller fakultas
+public function index()
+    {
+        //akses model fakultas
+        $fakultas = Fakultas::all(); //select*from fakultas
+        // dd($fakultas); //dump data
+        return view('fakultas.index')->with('fakultas',$fakultas);
+    }
+10. <h1>Fakultas</h1>
+@foreach ($fakultas as $item) 
+{{-- //$fakultas diambil dari with pada controller --}}
+    {{ $item->nama }}
+    {{ $item->singkatan }}
+    {{ $item->nama_dekan }}
+    {{ $item->nama_wadek }}
+@endforeach
+
+1. Clone repo Laravel
+2. Composer install in terminal
+3. Salin .env.example and rename to .env
+4. Turn on MYSQL
+5. Php artisan migrate
+6. Php artisan serve
+7. php artisan key:generate
+8. php artisan make:model Prodi -mcr
+9. Prodi Model
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Prodi extends Model
+{
+    protected $table ='prodi';
+    protected $fillable = ['nama','singkatan','kaprodi','sekretaris','fakultas_id'];
+}
+10. Prodi Controller
+public function index()
+    {
+        $prodi = Prodi::all(); //$prodi hanya alias
+        return view('prodi.index',compact('prodi')); compact('alias')
+    }
+11. web route 
+Route::resource('/prodi', ProdiController::class);
+12. migrate prodi
+Schema::create('prodi', function (Blueprint $table) {
+            $table->uuid('id');
+            $table->primary('id');
+            $table->string('nama', 30);
+            $table->char('singkatan',2);
+            $table->string('kaprodi', 30);
+            $table->string('sekretaris', 30);
+            // $table->foreignId('fakultas_id')->constrained('fakultas')->onDelete('restrict')->onUpdate('restrict'); ini make Id default int 
+            $table->uuid('fakultas_id');
+            $table->foreign('fakultas_id')->references('id')->on('fakultas')->onDelete('restrict')->onUpdate('restrict');
+            $table->timestamps();
+        });
+13. <h1>Prodi</h1>
+@foreach ($prodi as $item) //$prodi = alias yang sama
+{{ $item -> nama }}
+{{ $item -> singkatan }}
+{{ $item -> kaprodi }}
+{{ $item -> sekretaris }}
+@endforeach
+
+14.
+Schema::create('mahasiswa', function (Blueprint $table) {
+            $table->uuid('id');
+            $table->primary('id');
+            $table->string('nama', 30);
+            $table->char('npm',11);
+            $table->enum('jk', ['L', 'P']);
+            $table->date('tanggal_lahir');
+            $table->string('tempat_lahir',30);
+            $table->string('asal_sma', 50);
+            $table->string('foto', 50);
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('restrict')->onUpdate('restrict');
+            $table->timestamps();
+        });
+
+        15. create form
+        <form action="{{ route('fakultas.store')}}" method="POST">
+                    @csrf
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Fakultas</label>
+                        <input type="text" class="form-control" name="nama">
+                      </div>
+                      <div class="mb-3">
+                        <label for="singkatan" class="form-label">Singkatan Fakultas</label>
+                        <input type="text" class="form-control" name="singkatan">
+                      </div>
+                      <div class="mb-3">
+                        <label for="nama_dekan" class="form-label">Nama Dekan</label>
+                        <input type="text" class="form-control" name="nama_dekan">
+                      </div
+                      ><div class="mb-3">
+                        <label for="nama_wadek" class="form-label">Nama Wakil Dekan</label>
+                        <input type="text" class="form-control" name="nama_wadek">
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+
+        16. Create function
+        public function create()
+    {
+        return view('fakultas.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $input = $request->validate([
+            'nama' => 'required|unique:fakultas|max:50', harus sama dengan form
+            'singkatan' => 'required|unique:fakultas|max:4',
+            'nama_dekan' => 'required|max:30',
+            'nama_wadek' => 'required|max:30',
+        ]);
+
+        // Simpan ke tabel fakultas
+        Fakultas::create($input);
+
+        return redirect()->route('fakultas.index')->with('success', 'Fakultas Berhasil Disimpan');
+    }
+
+    17. Model fakultas
+    <?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Fakultas extends Model
+{
+
+    protected $fillable = ['nama','singkatan','nama_dekan','nama_wadek'];
+
+    use HasUuids; jika menggunakan UUID
+}
+
+18. View form mahasiswa
+
+@extends('main')
+
+@section('title', 'Mahasiswa')
+@section('content')
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary card-outline mb-4">
+                  <div class="card-header"><div class="card-title">Form Tambah @yield('title')</div></div>
+                  <form action="{{ route('mahasiswa.store')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Mahasiswa</label>
+                        <input type="text" class="form-control" name="nama">
+                      </div>
+                      <div class="mb-3">
+                        <label for="npm" class="form-label">NPM Mahasiswa</label>
+                        <input type="text" class="form-control" name="npm">
+                      </div>
+                      <div class="mb-3">
+                        <label for="nama" class="form-label">Jenis Kelamin</label>
+                        <br>
+                        <input checked class="form-check-input" value="L" id="L" type="radio" name="jk">
+                        <label for="jk" class="form-check-label">Laki-Laki</label>
+                        <input class="form-check-input" type="radio" id="P" value="P" name="jk">
+                        <label for="jk" class="form-check-label">Perempuan</label>
+                      </div>
+                      <div class="mb-3">
+                        <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir">
+                      </div>
+                      <div class="mb-3">
+                        <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                        <input type="text" class="form-control" name="tempat_lahir">
+                      </div>
+                      <div class="mb-3">
+                        <label for="asal_sma" class="form-label">Asal SMA/SMK</label>
+                        <input type="text" class="form-control" name="asal_sma">
+                      </div>
+                      <div class="mb-3">
+                        <label for="foto" class="form-label">Foto</label>
+                        <input class="form-control" name="foto" type="file" id="foto">
+                    </div>
+                      <div class="mb-3">
+                        <label for="prodi_id" class="form-label">Program Studi</label>
+                        <select class="form-select" name="prodi_id" id="prodi_id">
+                        @foreach ($prodi as $item)
+                          <option value="{{ $item -> id }}">{{ $item->nama }}</option>
+                        @endforeach
+                      </select>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+19. MahasiswaController
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Mahasiswa;
+use Illuminate\Http\Request;
+
+class MahasiswaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $mahasiswa = Mahasiswa::all();
+        return view('mahasiswa.index',compact('mahasiswa'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $prodi = \App\Models\Prodi::all();
+        return view('mahasiswa.create', compact('prodi'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $input = $request->validate([
+            'nama' => 'required|max:50',
+            'npm' => 'required|unique:mahasiswa|max:11',
+            'jk' => 'required',
+            'tanggal_lahir' => 'required',
+            'tempat_lahir' => 'required|max:30',
+            'asal_sma' => 'required|max:30',
+            'foto' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|required',
+            'prodi_id' => 'required'
+        ]);
+
+        if($request->hasFile('foto')){
+            $file = $request->file('foto');
+            $filename =time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('images'),$filename);
+            $input['foto'] = $filename; 
+        }
+
+        Mahasiswa::create($input);
+
+        return redirect()->route('mahasiswa.index')->with('success', 'Mahasiswa Berhasil Disimpan');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Mahasiswa $mahasiswa)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Mahasiswa $mahasiswa)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Mahasiswa $mahasiswa)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Mahasiswa $mahasiswa)
+    {
+        //
+    }
+}
+
+20. storage private
+FILESYSTEM_DISK=public //env
+php artisan storage:link
