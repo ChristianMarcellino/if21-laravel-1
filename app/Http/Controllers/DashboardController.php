@@ -33,18 +33,22 @@ class DashboardController extends Controller
             ->get();
         $prodiCollection = collect($kelasProdi);
 
-        $informatika = $prodiCollection->where('nama', 'Informatika');
-        $sistemInformasi = $prodiCollection->where('nama', 'Sistem Informasi');
+        $prodiData = [];
 
-        $informatikaData = [];
-        $sistemInformasiData = [];
+        $prodiNames = $prodiCollection->pluck('nama')->unique();
 
-        foreach ($tahunAkademik as $tahun) {
-            $informatikaJumlah = $informatika->firstWhere('tahun_akademik', $tahun)?->jumlah ?? 0;
-            $sistemInformasiJumlah = $sistemInformasi->firstWhere('tahun_akademik', $tahun)?->jumlah ?? 0;
+        foreach ($prodiNames as $prodiName) {
+            $dataPerTahun = [];
 
-            $informatikaData[] = $informatikaJumlah;
-            $sistemInformasiData[] = $sistemInformasiJumlah;
+            foreach ($tahunAkademik as $tahun) {
+                $jumlah = $prodiCollection
+                    ->where('nama', $prodiName)
+                    ->firstWhere('tahun_akademik', $tahun)?->jumlah ?? 0;
+
+                $dataPerTahun[] = $jumlah;
+            }
+
+            $prodiData[$prodiName] = $dataPerTahun;
         }
 
 

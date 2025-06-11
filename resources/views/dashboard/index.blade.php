@@ -247,12 +247,7 @@ Highcharts.chart('containerKelas', {
             'Source: Universitas MDP '
     },
     xAxis: {
-        categories:
-        [
-            @foreach ($tahunAkademik as $item)
-                '{{ $item }}',
-            @endforeach
-        ],
+        categories: {!! json_encode($tahunAkademik) !!},
         crosshair: true,
         accessibility: {
             description: 'Prodi'
@@ -274,15 +269,12 @@ Highcharts.chart('containerKelas', {
         }
     },
     series: [
-    {
-        name: 'Informatika',
-        data: {!! json_encode($informatikaData) !!}
-    },
-    {
-        name: 'Sistem Informasi',
-        data: {!! json_encode($sistemInformasiData) !!}
-    }
-]
+        @foreach ($prodiData as $prodiName => $data){
+            name: '{{ $prodiName }}',
+            data: {!! json_encode($data) !!}
+        }
+        @endforeach
+    ]
 });
   </script>
 @endsection
