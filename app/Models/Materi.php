@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Materi extends Model
 {
-    protected $table = "Materi";
+    protected $table = "materi";
     protected $fillable = ['mata_kuliah_id', 'dosen_id', 'pertemuan','pokok_bahasan', 'file_materi'];
 
     public function mata_kuliah(){

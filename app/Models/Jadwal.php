@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jadwal extends Model
 {
-    protected $table = 'Jadwal';
+    protected $table = 'jadwal';
     protected $fillable = ['tahun_akademik', 'kode_smt', 'kelas','mata_kuliah_id', 'dosen_id', 'sesi_id'];
 
     public function mata_kuliah(){
