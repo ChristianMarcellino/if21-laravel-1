@@ -30,6 +30,7 @@ class DashboardController extends Controller
             ->join('prodi', 'prodi_id', '=', 'prodi.id')
             ->select('tahun_akademik', 'prodi.nama', DB::raw('COUNT(*) as jumlah'))
             ->groupBy('prodi.nama', 'tahun_akademik')
+            ->sortBy('tahun_akademik')
             ->get();
         $prodiCollection = collect($kelasProdi);
 
