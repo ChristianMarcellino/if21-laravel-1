@@ -272,7 +272,7 @@ Highcharts.chart('containerKelas', {
         @foreach ($prodiData as $prodiName => $data){
             name: '{{ $prodiName }}',
             data: {!! json_encode($data) !!}
-        }
+        },
         @endforeach
     ]
 });
