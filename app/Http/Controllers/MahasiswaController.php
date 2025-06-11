@@ -6,6 +6,7 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class MahasiswaController extends Controller
 {
@@ -43,12 +44,33 @@ class MahasiswaController extends Controller
             'prodi_id' => 'required'
         ]);
 
-        if($request->hasFile('foto')){
-            $file = $request->file('foto');
-            $filename =time().'.'.$file->getClientOriginalExtension();
-            // $file->move(public_path('images'),$filename);Public Path
-            $file->storeAs('images', $filename);//Storage
-            $input['foto'] = $filename;
+        if ($request->hasFile('foto')) {
+            try {
+                $file = $request->file('foto');
+                $response = Http::asMultipart()->post(
+                    'https://api.cloudinary.com/v1_1/' . env('dbpxlzrf4') . '/image/upload',
+                    [
+                        [
+                            'name'     => 'file',
+                            'contents' => fopen($file->getRealPath(), 'r'),
+                            'filename' => $file->getClientOriginalName(),
+                        ],
+                        [
+                            'name'     => 'upload_preset',
+                            'contents' => env('laravel'),
+                        ],
+                    ]
+                );
+
+                $result = $response->json();
+                if (isset($result['secure_url'])) {
+                    $input['foto'] = $result['secure_url'];
+                } else {
+                    return back()->withErrors(['foto' => 'Cloudinary upload error: ' . ($result['error']['message'] ?? 'Unknown error')]);
+                }
+            } catch (\Exception $e) {
+                return back()->withErrors(['foto' => 'Cloudinary error: ' . $e->getMessage()]);
+            }
         }
 
         Mahasiswa::create($input);
@@ -91,12 +113,33 @@ class MahasiswaController extends Controller
             'prodi_id' => 'required'
         ]);
 
-        if($request->hasFile('foto')){
-            $file = $request->file('foto');
-            $filename =time().'.'.$file->getClientOriginalExtension();
-            // $file->move(public_path('images'),$filename);Public Path
-            $file->storeAs('images', $filename);//Storage
-            $input['foto'] = $filename;
+        if ($request->hasFile('foto')) {
+            try {
+                $file = $request->file('foto');
+                $response = Http::asMultipart()->post(
+                    'https://api.cloudinary.com/v1_1/' . env('dbpxlzrf4') . '/image/upload',
+                    [
+                        [
+                            'name'     => 'file',
+                            'contents' => fopen($file->getRealPath(), 'r'),
+                            'filename' => $file->getClientOriginalName(),
+                        ],
+                        [
+                            'name'     => 'upload_preset',
+                            'contents' => env('laravel'),
+                        ],
+                    ]
+                );
+
+                $result = $response->json();
+                if (isset($result['secure_url'])) {
+                    $input['foto'] = $result['secure_url'];
+                } else {
+                    return back()->withErrors(['foto' => 'Cloudinary upload error: ' . ($result['error']['message'] ?? 'Unknown error')]);
+                }
+            } catch (\Exception $e) {
+                return back()->withErrors(['foto' => 'Cloudinary error: ' . $e->getMessage()]);
+            }
         }
 
         $mahasiswa->update($input);
