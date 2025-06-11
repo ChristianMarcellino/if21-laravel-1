@@ -48,7 +48,7 @@ class MahasiswaController extends Controller
             try {
                 $file = $request->file('foto');
                 $response = Http::asMultipart()->post(
-                    'https://api.cloudinary.com/v1_1/' . env('dbpxlzrf4') . '/image/upload',
+                    'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/image/upload',
                     [
                         [
                             'name'     => 'file',
@@ -57,7 +57,7 @@ class MahasiswaController extends Controller
                         ],
                         [
                             'name'     => 'upload_preset',
-                            'contents' => env('laravel'),
+                            'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
                         ],
                     ]
                 );
@@ -117,7 +117,7 @@ class MahasiswaController extends Controller
             try {
                 $file = $request->file('foto');
                 $response = Http::asMultipart()->post(
-                    'https://api.cloudinary.com/v1_1/' . env('dbpxlzrf4') . '/image/upload',
+                    'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/image/upload',
                     [
                         [
                             'name'     => 'file',
@@ -126,7 +126,7 @@ class MahasiswaController extends Controller
                         ],
                         [
                             'name'     => 'upload_preset',
-                            'contents' => env('laravel'),
+                            'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
                         ],
                     ]
                 );
