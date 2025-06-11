@@ -23,6 +23,7 @@ class DashboardController extends Controller
         $tahunAkademik = DB::table('jadwal')
         ->select('tahun_akademik')
         ->distinct()
+        ->orderBy('tahun_akademik')
         ->pluck('tahun_akademik');
 
         $kelasProdi = DB::table('jadwal')
