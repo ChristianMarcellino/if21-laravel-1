@@ -52,6 +52,6 @@ class DashboardController extends Controller
         }
 
 
-        return view('dashboard.index', compact('mahasiswaProdi','mahasiswaSma','mahasiswaTahun','informatikaData','sistemInformasiData','tahunAkademik'));
+        return view('dashboard.index', compact('mahasiswaProdi','mahasiswaSma','mahasiswaTahun','prodiData','tahunAkademik'));
     }
 }
