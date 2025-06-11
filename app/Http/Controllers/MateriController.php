@@ -44,12 +44,34 @@ class MateriController extends Controller
             'dosen_id' => 'required',
             'file_materi' => 'required|file|mimes:pdf,ppt,pptx,doc,docx'
         ]);
-        if($request->hasFile('file_materi')){
-            $file = $request->file('file_materi');
-            $oriName = $file->getClientOriginalName();
-            $filename =time() . '_' . $oriName;
-            $file->storeAs('files', $filename);//Storage
-            $input['file_materi'] = $filename;
+
+        if ($request->hasFile('file_materi')) {
+            try {
+                $file = $request->file('file_materi');
+                $response = Http::asMultipart()->post(
+                    'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/auto/upload',
+                    [
+                        [
+                            'name'     => 'file',
+                            'contents' => fopen($file->getRealPath(), 'r'),
+                            'filename' => $file->getClientOriginalName(),
+                        ],
+                        [
+                            'name'     => 'upload_preset',
+                            'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
+                        ],
+                    ]
+                );
+
+                $result = $response->json();
+                if (isset($result['secure_url'])) {
+                    $input['file_materi'] = $result['secure_url'];
+                } else {
+                    return back()->withErrors(['file_materi' => 'Cloudinary upload error: ' . ($result['error']['message'] ?? 'Unknown error')]);
+                }
+            } catch (\Exception $e) {
+                return back()->withErrors(['file_materi' => 'Cloudinary error: ' . $e->getMessage()]);
+            }
         }
 
         Materi::create($input);
@@ -86,12 +108,33 @@ class MateriController extends Controller
             'dosen_id' => 'required',
             'file_materi' => 'file|mimes:pdf,ppt,pptx,doc,docx'
         ]);
-        if($request->hasFile('file_materi')){
-            $file = $request->file('file_materi');
-            $oriName = $file->getClientOriginalName();
-            $filename =time() . '_' . $oriName;
-            $file->storeAs('files', $filename);//Storage
-            $input['file_materi'] = $filename;
+        if ($request->hasFile('file_materi')) {
+            try {
+                $file = $request->file('file_materi');
+                $response = Http::asMultipart()->post(
+                    'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/auto/upload',
+                    [
+                        [
+                            'name'     => 'file',
+                            'contents' => fopen($file->getRealPath(), 'r'),
+                            'filename' => $file->getClientOriginalName(),
+                        ],
+                        [
+                            'name'     => 'upload_preset',
+                            'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
+                        ],
+                    ]
+                );
+
+                $result = $response->json();
+                if (isset($result['secure_url'])) {
+                    $input['file_materi'] = $result['secure_url'];
+                } else {
+                    return back()->withErrors(['file_materi' => 'Cloudinary upload error: ' . ($result['error']['message'] ?? 'Unknown error')]);
+                }
+            } catch (\Exception $e) {
+                return back()->withErrors(['file_materi' => 'Cloudinary error: ' . $e->getMessage()]);
+            }
         }
 
         $materi->update($input);

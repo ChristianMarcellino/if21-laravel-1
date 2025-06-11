@@ -56,9 +56,9 @@
                                     <td>{{$item->pokok_bahasan}}</td>
                                     <td>
                                         <?php
-                                            $fileName = substr($item->file_materi, strpos($item->file_materi, '_') + 1);
+                                            $fileName = basename($item->file_materi);
                                             ?>
-                                        <a href="{{ asset('storage/files/' . $item->file_materi) }}" download>
+                                        <a href="{{ $item->file_materi }}" download>
                                             {{ $fileName }}
                                         </a>
                                     </td>

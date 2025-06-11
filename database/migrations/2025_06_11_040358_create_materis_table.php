@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('pertemuan');
             $table->string('pokok_bahasan', 50);
-            $table->string('file_materi', 70);
+            $table->string('file_materi', 200);
             $table->unsignedBigInteger('mata_kuliah_id');
             $table->foreign('mata_kuliah_id')->references('id')->on('mata_kuliah')->onDelete('restrict')->onUpdate('restrict');
             $table->unsignedBigInteger('dosen_id');

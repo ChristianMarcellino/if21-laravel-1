@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('tanggal_lahir');
             $table->string('tempat_lahir',30);
             $table->string('asal_sma', 50);
-            $table->string('foto', 50);
+            $table->string('foto', 200);
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('restrict')->onUpdate('restrict');
             $table->timestamps();
