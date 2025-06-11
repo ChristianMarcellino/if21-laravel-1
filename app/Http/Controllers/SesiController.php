@@ -31,7 +31,7 @@ class SesiController extends Controller
     public function store(Request $request)
     {
         $input = $request->validate([
-            'nama' => 'unique:sesi|required|max:9',
+            'nama' => 'unique:sesi|required|max:12',
         ]);
 
         Sesi::create($input);
@@ -60,7 +60,7 @@ class SesiController extends Controller
     public function update(Request $request, Sesi $sesi)
     {
         $input = $request->validate([
-            'nama' => ['required',Rule::unique('sesi')->ignore($sesi->id),'max:9'],
+            'nama' => ['required',Rule::unique('sesi')->ignore($sesi->id),'max:12'],
         ]);
 
         $sesi->update($input);
