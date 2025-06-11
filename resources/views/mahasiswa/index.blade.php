@@ -65,7 +65,7 @@
                                         ?>
                                     </td>
                                     <td>{{ $item -> asal_sma }}</td>
-                                    <td><img class="m-auto" src="{{ $item->foto) }}" alt="Image" style="width: 100px;"></td>
+                                    <td><img class="m-auto" src="{{ $item->foto }}" alt="Image" style="width: 100px;"></td>
                                     <td>{{ $item -> tempat_lahir }}</td>
                                     <td>{{$item->prodi->nama}}</td>
                                     <td>{{ $item -> prodi -> fakultas -> nama }}</td>
